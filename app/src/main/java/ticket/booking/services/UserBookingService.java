@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jdk.dynalink.beans.StaticClass;
 import ticket.booking.entities.User;
+import ticket.booking.util.UserServiceUtil;
 
 import java.io.File;
 import java.io.IOException;
@@ -18,18 +19,25 @@ public class UserBookingService {
 
     private ObjectMapper objectMapper = new ObjectMapper();
 
-    private static final String USERS_PATH = "../localDb/users.json";
+    private static final String USER_FILE_PATH = "../localDb/users.json";
 
     public UserBookingService(User user) throws IOException {
         this.user = user;
-        File users = new File(USERS_PATH);
-        userList = objectMapper.readValue(users, new TypeReference<List<User>>() {});
+        loadUsers();
+    }
 
+    public UserBookingService() throws IOException{
+        loadUsers();
+    }
+
+    public List<User> loadUsers() throws IOException{
+        File users = new File(USER_FILE_PATH);
+        return objectMapper.readValue(users, new TypeReference<List<User>>() {});
     }
 
     public Boolean loginUser(){
         Optional<User> foundUser = userList.stream().filter(user1 -> {
-            return user1.getName().equals(user.getName()) && UserServiceUtil.checkPassword(user.getPassword(), user1.getHashedPassword());
+            return user1.getName().equalsIgnoreCase(user.getName()) && UserServiceUtil.checkPassword(user.getPassword(), user1.getHashPassword());
         }).findFirst();
         return foundUser.isPresent();
     }
@@ -42,5 +50,18 @@ public class UserBookingService {
         }catch (IOException ex){
             return Boolean.FALSE;
         }
+    }
+
+    private void saveUserListToFile() throws IOException {
+        File usersFile = new File(USER_FILE_PATH);
+        objectMapper.writeValue(usersFile, userList);
+    }
+
+    public void fetchBookings(){
+        user.printTickets();
+    }
+
+    public Boolean cancelBooking(){
+        return Boolean.FALSE;
     }
 }

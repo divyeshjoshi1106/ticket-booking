@@ -3,15 +3,31 @@
  */
 package ticket.booking;
 
+import ticket.booking.services.UserBookingService;
+
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Scanner;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 public class App {
 
     public static void main(String[] args) {
+        System.out.println("Running Train Booking System!");
+        Scanner scanner = new Scanner(System.in);
+
+        int option = 0;
+        UserBookingService userBookingService;
+
+        try {
+            userBookingService = new UserBookingService();
+        } catch (IOException e){
+            System.out.println("There is something wrong!");
+            return;
+        }
 
     }
 }
